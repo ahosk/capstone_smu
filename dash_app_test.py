@@ -8,8 +8,6 @@ from dash import dash_table as dt
 import yahoo_fin.stock_info as yf
 import plotly.graph_objs as go
 from datetime import datetime, timedelta
-import pickle
-import random
 import pandas as pd
 
 
@@ -76,7 +74,7 @@ app.layout = html.Div(
                                 placeholder="Enter Stock Ticker",
                                 style={"color": '#696969'}
                             ),
-                            width={"size": 2, "offset": 3},
+                            width={"size": 2},
                         ),
                         dbc.Col(  # Graph type
                             dcc.Dropdown(
@@ -117,6 +115,22 @@ app.layout = html.Div(
                             ),
                             width={"size": 2},
                         ),
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id="plot_value",
+                                options=[
+                                    {"label": "Market Cap", "value": "Mkt_Cap"},
+                                    {'label': 'EPS GR 3M', 'value':'EPS_GR_3M'},
+                                    {'label': 'REV GR 3M', 'value':'REV_GR_3M'},
+                                    {'label': 'DY 3M Rev', 'value':'DY_3M_Rev'},
+                                    {'label': 'EVS 3M Rev', 'value':'EVS_3M_Rev'},
+                                    {'label': 'PB 3M Rev', 'value':'PB_3M_Rev'},
+                                ],
+                                value="Mkt_Cap",
+                                style={"color": "#696969"},
+                            ),
+                            width={"size": 2},
+                        ),
                         dbc.Col(  # button
                             dbc.Button(
                                 "Plot",
@@ -126,7 +140,7 @@ app.layout = html.Div(
                             ),
                             width={"size": 2},
                         ),
-                    ]
+                    ], justify='center',
                 )
             ]
         ),
@@ -179,6 +193,19 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             dcc.Graph(
+                                id='true_pred_graph',
+                                config={
+                                    "displaylogo":False,
+                                    "modeBarButtonsToRemove":["pan2d", "lasso2d"],
+                                }
+                            ),
+                        )
+                    ]
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            dcc.Graph(
                                 id="graph",
                                 config={
                                     "displaylogo": False,
@@ -222,6 +249,70 @@ app.layout = html.Div(
 )
 
 # Callback main graph
+@app.callback(
+    # output
+    Output("true_pred_graph", "figure"),
+    # input
+    [Input("submit-button-state", "n_clicks"),
+    # state
+    State("stock_name", "value"), State("chart", "value"),State('plot_value','value')],
+)
+def true_pred_generator(n_clicks,ticker,chart_name,data_plot):
+    df = df_true[df_true['ticker']==ticker]
+    df['datepart'] = pd.to_datetime(df['Date'])
+    df['monthyear'] = df.datepart.astype('datetime64[M]') 
+    charts = ['Line','Candlestick','SMA','OHLC','EMA']
+    if chart_name in charts:
+        true_fig = go.Figure(
+                data=[
+                    go.Scatter(
+                        x=df['monthyear'], y=df[data_plot],name=data_plot,line_color='green'
+                    )
+                ],
+            layout={
+                    "height": 1000,
+                    "title": ticker + ': ' + data_plot,
+                    "showlegend": True,
+                    "plot_bgcolor": colors["background"],
+                    "paper_bgcolor": colors['background'],
+                    "font": {"color": colors["text"]},
+                }
+        )
+        true_fig.update_xaxes(
+                rangeslider_visible=True,
+                rangeselector=dict(
+                    activecolor="blue",
+                    bgcolor=colors["background"],
+                    buttons=list(
+                        [
+                            dict(count=7, label="10D",step="day", stepmode="backward"
+                            ),
+                            dict(
+                                count=15, label="15D", step="day", stepmode="backward"
+                            ),
+                            dict(
+                                count=1, label="1m", step="month", stepmode="backward"
+                            ),
+                            dict(
+                                count=3, label="3m", step="month", stepmode="backward"
+                            ),
+                            dict(
+                                count=6, label="6m", step="month", stepmode="backward"
+                            ),
+                            dict(count=1, label="1y", step="year",stepmode="backward"
+                            ),
+                            dict(count=5, label="5y", step="year",stepmode="backward"
+                            ),
+                            dict(count=1, label="YTD",step="year", stepmode="todate"
+                            ),
+                            dict(step="all"
+                            ),
+                        ]
+                    ),
+                ),
+            )
+            
+    return true_fig
 
 
 @app.callback(
