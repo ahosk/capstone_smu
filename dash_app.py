@@ -131,6 +131,22 @@ app.layout = html.Div(
                             ),
                             width={"size": 2},
                         ),
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id="plot_value2",
+                                options=[
+                                    {"label": "Predicted Forward EPS 3M", "value": "Pred_FWD_EPS_3M_GR"},
+                                    {'label': 'Predicted Forward Revenue 3M', 'value':'Pred_FWD_REV_3M_GR'},
+                                    {'label': 'Predicted FPE 3M', 'value':'Pred_FPE_3M_REV'},
+                                    {'label': 'Predicted EVS 3M', 'value':'Pred_EVS_3M_REV'},
+                                    {'label': 'Predicted DY 3M', 'value':'Pred_DY_3M_REV'},
+                                    {'label': 'Predicted PB 3M', 'value':'Pred_PB_3M_REV'},
+                                ],
+                                value="Pred_FWD_EPS_3M_GR",
+                                style={"color": "#696969"},
+                            ),
+                            width={"size": 2},
+                        ),
                         dbc.Col(  # button
                             dbc.Button(
                                 "Plot",
@@ -255,12 +271,16 @@ app.layout = html.Div(
     # input
     [Input("submit-button-state", "n_clicks"),
     # state
-    State("stock_name", "value"), State("chart", "value"),State('plot_value','value')],
+    State("stock_name", "value"), State("chart", "value"),State('plot_value','value'),State('plot_value2','value')],
 )
-def true_pred_generator(n_clicks,ticker,chart_name,data_plot):
+def true_pred_generator(n_clicks,ticker,chart_name,data_plot,data_plot2):
     df = df_true[df_true['ticker']==ticker]
     df['datepart'] = pd.to_datetime(df['Date'])
     df['monthyear'] = df.datepart.astype('datetime64[M]') 
+    df2 = df_pred[df_pred['ticker']==ticker]
+    df2['datepart'] = pd.to_datetime(df2['Date'])
+    df2['monthyear'] = df2.datepart.astype('datetime64[M]') 
+
     charts = ['Line','Candlestick','SMA','OHLC','EMA']
     if chart_name in charts:
         true_fig = go.Figure(
@@ -310,6 +330,11 @@ def true_pred_generator(n_clicks,ticker,chart_name,data_plot):
                         ]
                     ),
                 ),
+            )
+        true_fig.add_trace(
+                go.Scatter(
+                        x=df2['monthyear'], y=df2[data_plot2],name=data_plot2,line_color='red'
+                    )
             )
             
     return true_fig
