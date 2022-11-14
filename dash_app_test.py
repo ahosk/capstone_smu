@@ -157,10 +157,11 @@ app.layout = html.Div(
                                     "backgroundColor": colors["background"],
                                     "border": "#4d4d4d",
                                 },
+                                columns=[{'id':c,'name':c} for c in df_pred.columns.values],
                                 data=df_pred.to_dict('records'),
-                                columns=[{'id':c,'name':c} for c in df_pred.columns.values]
+                                editable=False
                             ),
-                            width={"size": 6,'offset':3},
+                            width={"size": 6,'offset':3}
                         )]
                     ),
                 dbc.Row(
@@ -571,18 +572,17 @@ def quotes_generator(n_clicks, ticker):
     current_stock = yf.get_quote_table(ticker, dict_result=False)
     columns = [{"name": i, "id": i} for i in current_stock.columns]
     t_data = current_stock.to_dict("records")
-
-    # price
-
     return columns, t_data
 
 @app.callback(
     Output('predictions','data'),
-    [Input("submit-button-state", "n_clicks"),Input('quarter','value')],
-    [State('quarter',"value")]
+    Input("submit-button-state", "n_clicks"),
+    Input('quarter','value'),
+    State('quarter',"value")
 )
 def get_predictions(n_clicks,ticker,quarter):
-    return df_pred[(df_pred['ticker']== ticker ) & (df_pred['Date']==quarter)].to_dict('records')
+    df = df_pred[(df_pred['ticker']== ticker ) & (df_pred['Date']==quarter)].to_dict('records')
+    return df
 
 if __name__ == "__main__":
     app.run_server(debug=True)
