@@ -104,7 +104,13 @@ app.layout = html.Div(
                                 options=[
                                     {"label": "Q4 2019", "value": "12/27/2019"},
                                     {"label": "Q1 2020", "value": "4/3/2020"},
-                                    {"label": "Q2 2020", "value": "7/2/2020"}
+                                    {"label": "Q2 2020", "value": "7/2/2020"},
+                                    {'label': "Q3 2020", "value": "BLANK"},
+                                    {'label': "Q4 2020", "value": "BLANK"},
+                                    {'label': "Q1 2021", "value": "BLANK"},
+                                    {'label': "Q2 2021", "value": "BLANK"},
+                                    {'label': "Q3 2021", "value": "BLANK"},
+                                    {'label': "Q4 2021", "value": "BLANK"},
                                 ],
                                 value="12/27/2019",
                                 style={"color": "#696969"},
@@ -137,32 +143,38 @@ app.layout = html.Div(
                                 config={
                                     "displaylogo": False,
                                     "modeBarButtonsToRemove": ["pan2d", "lasso2d"],
-                                },
-                                style={"display": 'inline-block'}
+                                }
                             )
                         ), 
-                        dbc.Col(
+                        ]
+                    ),
+                    dbc.Col(
                             dt.DataTable(
                                 id="predictions",
-                                style_table={"height": "500",'overflowX':'scroll','overflowY':'scroll'},
+                                style_table={"width": "auto"},
                                 style_cell={
                                     "white_space": "normal",
                                     "height": "auto",
-                                    "backgroundColor": colors["background"],
+                                    "backgroundColor": '#272727',
                                     "color": "white",
-                                    "font_size": "10px"
+                                    "font_size": "12px",
+                                    'textAlign':'left',
+                                    'padding':'5px',
+                                    'fontWeight':'bold'
                                 },
-                                style_data={"border": "#4d4d4d"},
+                                style_data={"border": "white"},
                                 style_header={
-                                    "backgroundColor": colors["background"],
+                                    "backgroundColor": colors['background'],
                                     "border": "#4d4d4d",
+                                    'textAlign': 'left',
+                                    'fontWeight':'bold',
+                                    'font_size':'16px',
+                                    'padding':'5px'
                                 },
                                 columns=[{'id':c,'name':c} for c in df_pred.columns.values],
-                                data=df_pred.to_dict('records')
-                            ),
-                            width={"size": 6,'offset':3}
-                        )]
-                    ),
+                                data=df_pred.to_dict('records'),
+                            )
+                        ),
                 dbc.Row(
                     [
                         dbc.Col(
@@ -553,17 +565,13 @@ def graph_generator(n_clicks, ticker, chart_name):
             "font": {"color": colors["text"]}
         },
     )
-   
 
     return fig, live_price
 
 
 @app.callback(
-    # output
     [Output("info", "columns"), Output("info", "data")],
-    # input
     [Input("submit-button-state", "n_clicks")],
-    # state
     [State("stock_name", "value")],
 )
 def quotes_generator(n_clicks, ticker):
