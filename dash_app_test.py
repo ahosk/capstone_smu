@@ -103,7 +103,7 @@ app.layout = html.Div(
                                 id="quarter",
                                 options=[
                                     {"label": "Q4 2019", "value": "12/27/2019"},
-                                    {"label": "Q1 2020", "value": "'4/3/2020'"},
+                                    {"label": "Q1 2020", "value": "4/3/2020"},
                                     {"label": "Q2 2020", "value": "7/2/2020"}
                                 ],
                                 value="12/27/2019",
@@ -144,13 +144,13 @@ app.layout = html.Div(
                         dbc.Col(
                             dt.DataTable(
                                 id="predictions",
-                                style_table={"height": "auto"},
+                                style_table={"height": "500",'overflowX':'scroll','overflowY':'scroll'},
                                 style_cell={
                                     "white_space": "normal",
                                     "height": "auto",
                                     "backgroundColor": colors["background"],
                                     "color": "white",
-                                    "font_size": "10px",
+                                    "font_size": "10px"
                                 },
                                 style_data={"border": "#4d4d4d"},
                                 style_header={
@@ -158,8 +158,7 @@ app.layout = html.Div(
                                     "border": "#4d4d4d",
                                 },
                                 columns=[{'id':c,'name':c} for c in df_pred.columns.values],
-                                data=df_pred.to_dict('records'),
-                                editable=False
+                                data=df_pred.to_dict('records')
                             ),
                             width={"size": 6,'offset':3}
                         )]
@@ -576,12 +575,11 @@ def quotes_generator(n_clicks, ticker):
 
 @app.callback(
     Output('predictions','data'),
-    Input("submit-button-state", "n_clicks"),
-    Input('quarter','value'),
-    State('quarter',"value")
+    Input("quarter", "value"),Input('stock_name','value'),
+    State('quarter','value')
 )
 def get_predictions(n_clicks,ticker,quarter):
-    df = df_pred[(df_pred['ticker']== ticker ) & (df_pred['Date']==quarter)].to_dict('records')
+    df = df_pred[(df_pred['ticker'] == ticker ) & (df_pred['Date']==quarter)].to_dict('records')
     return df
 
 if __name__ == "__main__":
