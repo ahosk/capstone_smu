@@ -14,11 +14,15 @@ import pandas as pd
 
 
 # defining style color
-colors = {"background": "#000000", "text": "#8c92ac"}
+colors = {"background": "#000000", "text": "#696969"}
 
 df_true = pd.read_pickle(r'../Dashboard/dash_data_true.pkl.gzip',compression='gzip')
 df_true['ticker'] = df_true['ticker'].str.replace(r'-US','')
 ticker_list = df_true.ticker.unique()
+
+df_pred = pd.read_pickle(r'../Dashboard/dash_data_pred.pkl.gzip',compression='gzip')
+df_pred['ticker'] = df_pred['ticker'].str.replace(r'-US','')
+df_pred = df_pred.rename(columns={"1":"POM_Probability"})
 
 external_stylesheets = [dbc.themes.DARKLY]
 
@@ -70,8 +74,9 @@ app.layout = html.Div(
                                 searchable=True,
                                 value='AAPL',
                                 placeholder="Enter Stock Ticker",
+                                style={"color": '#696969'}
                             ),
-                            width={"size": 3, "offset": 3},
+                            width={"size": 2, "offset": 3},
                         ),
                         dbc.Col(  # Graph type
                             dcc.Dropdown(
@@ -89,9 +94,22 @@ app.layout = html.Div(
                                     {"label": "OHLC", "value": "OHLC"},
                                 ],
                                 value="Line",
-                                style={"color": "#000000"},
+                                style={"color": "#696969"},
                             ),
-                            width={"size": 3},
+                            width={"size": 2},
+                        ),
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id="quarter",
+                                options=[
+                                    {"label": "Q4 2019", "value": "12/27/2019"},
+                                    {"label": "Q1 2020", "value": "'4/3/2020'"},
+                                    {"label": "Q2 2020", "value": "7/2/2020"}
+                                ],
+                                value="12/27/2019",
+                                style={"color": "#696969"},
+                            ),
+                            width={"size": 2},
                         ),
                         dbc.Col(  # button
                             dbc.Button(
@@ -120,10 +138,31 @@ app.layout = html.Div(
                                     "displaylogo": False,
                                     "modeBarButtonsToRemove": ["pan2d", "lasso2d"],
                                 },
+                                style={"display": 'inline-block'}
                             )
-                        )
-                    ]
-                ),
+                        ), 
+                        dbc.Col(
+                            dt.DataTable(
+                                id="predictions",
+                                style_table={"height": "auto"},
+                                style_cell={
+                                    "white_space": "normal",
+                                    "height": "auto",
+                                    "backgroundColor": colors["background"],
+                                    "color": "white",
+                                    "font_size": "10px",
+                                },
+                                style_data={"border": "#4d4d4d"},
+                                style_header={
+                                    "backgroundColor": colors["background"],
+                                    "border": "#4d4d4d",
+                                },
+                                data=df_pred.to_dict('records'),
+                                columns=[{'id':c,'name':c} for c in df_pred.columns.values]
+                            ),
+                            width={"size": 6,'offset':3},
+                        )]
+                    ),
                 dbc.Row(
                     [
                         dbc.Col(
@@ -181,7 +220,7 @@ app.layout = html.Div(
     # state
     [State("stock_name", "value"), State("chart", "value")],
 )
-def graph_genrator(n_clicks, ticker, chart_name):
+def graph_generator(n_clicks, ticker, chart_name):
 
     if n_clicks >= 1:  # Checking for user to click submit button
 
@@ -276,8 +315,8 @@ def graph_genrator(n_clicks, ticker, chart_name):
                     bgcolor=colors["background"],
                     buttons=list(
                         [
-                            dict(count=7, label="10D",
-                                 step="day", stepmode="backward"),
+                            dict(count=7, label="10D",step="day", stepmode="backward"
+                            ),
                             dict(
                                 count=15, label="15D", step="day", stepmode="backward"
                             ),
@@ -290,13 +329,14 @@ def graph_genrator(n_clicks, ticker, chart_name):
                             dict(
                                 count=6, label="6m", step="month", stepmode="backward"
                             ),
-                            dict(count=1, label="1y", step="year",
-                                 stepmode="backward"),
-                            dict(count=5, label="5y", step="year",
-                                 stepmode="backward"),
-                            dict(count=1, label="YTD",
-                                 step="year", stepmode="todate"),
-                            dict(step="all"),
+                            dict(count=1, label="1y", step="year",stepmode="backward"
+                            ),
+                            dict(count=5, label="5y", step="year",stepmode="backward"
+                            ),
+                            dict(count=1, label="YTD",step="year", stepmode="todate"
+                            ),
+                            dict(step="all"
+                            ),
                         ]
                     ),
                 ),
@@ -510,9 +550,10 @@ def graph_genrator(n_clicks, ticker, chart_name):
             "showlegend": True,
             "plot_bgcolor": colors["background"],
             "paper_bgcolor": colors["background"],
-            "font": {"color": colors["text"]},
+            "font": {"color": colors["text"]}
         },
     )
+   
 
     return fig, live_price
 
@@ -525,7 +566,7 @@ def graph_genrator(n_clicks, ticker, chart_name):
     # state
     [State("stock_name", "value")],
 )
-def quotes_genrator(n_clicks, ticker):
+def quotes_generator(n_clicks, ticker):
     # info table
     current_stock = yf.get_quote_table(ticker, dict_result=False)
     columns = [{"name": i, "id": i} for i in current_stock.columns]
@@ -535,6 +576,13 @@ def quotes_genrator(n_clicks, ticker):
 
     return columns, t_data
 
+@app.callback(
+    Output('predictions','data'),
+    [Input("submit-button-state", "n_clicks"),Input('quarter','value')],
+    [State('quarter',"value")]
+)
+def get_predictions(n_clicks,ticker,quarter):
+    return df_pred[(df_pred['ticker']== ticker ) & (df_pred['Date']==quarter)].to_dict('records')
 
 if __name__ == "__main__":
     app.run_server(debug=True)
