@@ -98,26 +98,25 @@ app.layout = html.Div(
                             ),
                             width={"size": 2},
                         ),
-                        dbc.Col(
-                            dcc.Dropdown(
-                                id="quarter",
-                                options=[
-                                    {"label": "Q4 2019", "value": "12/27/19"},
-                                    {"label": "Q1 2020", "value": "4/3/20"},
-                                    {"label": "Q2 2020", "value": "7/2/20"},
-                                    {'label': "Q3 2020", "value": "10/2/20"},
-                                    {'label': "Q4 2020", "value": "12/31/20"},
-                                    {'label': "Q1 2021", "value": "4/1/21"},
-                                    {'label': "Q2 2021", "value": "7/2/21"},
-                                    {'label': "Q3 2021", "value": "10/1/21"}
-                                ],
-                                placeholder='Select Prediction Quarter(s)',
-                                value='12/27/2019',
-                                multi=False,
-                                style={"color": "#696969"},
-                            ),
-                            width={"size": 2},
-                        ),
+                        # dbc.Col(
+                        #     dcc.Dropdown(
+                        #         id="quarter",
+                        #         options=[
+                        #             {"label": "Q4 2019", "value": "12/27/19"},
+                        #             {"label": "Q1 2020", "value": "4/3/20"},
+                        #             {"label": "Q2 2020", "value": "7/2/20"},
+                        #             {'label': "Q3 2020", "value": "10/2/20"},
+                        #             {'label': "Q4 2020", "value": "12/31/20"},
+                        #             {'label': "Q1 2021", "value": "4/1/21"},
+                        #             {'label': "Q2 2021", "value": "7/2/21"},
+                        #             {'label': "Q3 2021", "value": "10/1/21"}
+                        #         ],
+                        #         value='12/27/19',
+                        #         multi=True,
+                        #         style={"color": "#696969"},
+                        #     ),
+                        #     width={"size": 2},
+                        # ),
                         dbc.Col(
                             dcc.Dropdown(
                                 id="plot_value",
@@ -706,11 +705,11 @@ def quotes_generator(n_clicks, ticker):
 
 @app.callback(
     Output('predictions','data'),
-    Input("quarter", "value"),Input('stock_name','value'),
-    State('quarter','value')
+    Input('stock_name','value'),
+    State('stock_name','value')
 )
-def get_predictions(n_clicks,ticker,quarter):
-    df = df_pred[(df_pred['Ticker'] == ticker ) & (df_pred['Date']==quarter)].to_dict('records')
+def get_predictions(n_clicks,ticker):
+    df = df_pred[df_pred['Ticker'] == ticker].to_dict('records')
     return df
 
 if __name__ == "__main__":
