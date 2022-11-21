@@ -146,7 +146,7 @@ app.layout = html.Div(
                                     {'label': 'Predicted Revenue_Growth_3M_Rank', 'value':'Revenue_Growth_3M_Rank'},
                                     {'label': 'Predicted FPE_Revision_3M_Rank', 'value':'FPE_Revision_3M_Rank'},
                                     {'label': 'Predicted DY_Revision_3M_Rank', 'value':'DY_Revision_3M_Rank'},
-                                    {'label': 'Predicted B_Revision_3M_Rank', 'value':'PB_Revision_3M_Rank'},
+                                    {'label': 'Predicted PB_Revision_3M_Rank', 'value':'PB_Revision_3M_Rank'},
                                     {'label': 'Predicted EVS_Revision_3M_Rank', 'value':'EVS_Revision_3M_Rank'},
                                 ],
                                 placeholder='Select a Predicted Value',
