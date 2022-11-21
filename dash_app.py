@@ -14,13 +14,12 @@ import pandas as pd
 # defining style color
 colors = {"background": "#000000", "text": "#696969"}
 
-df_true = pd.read_pickle(r'../Dashboard/dash_data_true.pkl.gzip',compression='gzip')
+df_true = pd.read_pickle(r'../Dashboard/_dash_data_true_.pkl.gzip',compression='gzip')
 df_true['ticker'] = df_true['ticker'].str.replace(r'-US','')
 ticker_list = df_true.ticker.unique()
 
-df_pred = pd.read_pickle(r'../Dashboard/dash_data_pred.pkl.gzip',compression='gzip')
-df_pred['ticker'] = df_pred['ticker'].str.replace(r'-US','')
-df_pred = df_pred.rename(columns={"1":"POM_Probability"})
+df_pred = pd.read_pickle(r'../Dashboard/_dash_data_pred_.pkl.gzip',compression='gzip')
+df_pred['Ticker'] = df_pred['Ticker'].str.replace(r'-US','')
 
 external_stylesheets = [dbc.themes.DARKLY]
 
@@ -70,7 +69,8 @@ app.layout = html.Div(
                                     for i in range(len(ticker_list))
                                 ],
                                 searchable=True,
-                                placeholder = 'Enter Stock Ticker',
+                                value='AAPL',
+                                #placeholder = 'Enter Stock Ticker',
                                 multi=False,
                                 style={"color": '#696969'}
                             ),
@@ -92,6 +92,7 @@ app.layout = html.Div(
                                     {"label": "OHLC", "value": "OHLC"},
                                 ],
                                 placeholder = 'Select Chart Type',
+                                value='Line',
                                 multi=False,
                                 style={"color": "#696969"},
                             ),
@@ -101,17 +102,17 @@ app.layout = html.Div(
                             dcc.Dropdown(
                                 id="quarter",
                                 options=[
-                                    {"label": "Q4 2019", "value": "12/27/2019"},
-                                    {"label": "Q1 2020", "value": "4/3/2020"},
-                                    {"label": "Q2 2020", "value": "7/2/2020"},
-                                    {'label': "Q3 2020", "value": "BLANK"},
-                                    {'label': "Q4 2020", "value": "BLANK"},
-                                    {'label': "Q1 2021", "value": "BLANK"},
-                                    {'label': "Q2 2021", "value": "BLANK"},
-                                    {'label': "Q3 2021", "value": "BLANK"},
-                                    {'label': "Q4 2021", "value": "BLANK"},
+                                    {"label": "Q4 2019", "value": "12/27/19"},
+                                    {"label": "Q1 2020", "value": "4/3/20"},
+                                    {"label": "Q2 2020", "value": "7/2/20"},
+                                    {'label': "Q3 2020", "value": "10/2/20"},
+                                    {'label': "Q4 2020", "value": "12/31/20"},
+                                    {'label': "Q1 2021", "value": "4/1/21"},
+                                    {'label': "Q2 2021", "value": "7/2/21"},
+                                    {'label': "Q3 2021", "value": "10/1/21"}
                                 ],
                                 placeholder='Select Prediction Quarter(s)',
+                                value='12/27/2019',
                                 multi=False,
                                 style={"color": "#696969"},
                             ),
@@ -121,13 +122,14 @@ app.layout = html.Div(
                             dcc.Dropdown(
                                 id="plot_value",
                                 options=[
-                                    {"label": "Market Cap", "value": "Mkt_Cap"},
-                                    {'label': 'EPS GR 3M', 'value':'EPS_GR_3M'},
-                                    {'label': 'REV GR 3M', 'value':'REV_GR_3M'},
-                                    {'label': 'DY 3M Rev', 'value':'DY_3M_Rev'},
-                                    {'label': 'EVS 3M Rev', 'value':'EVS_3M_Rev'},
-                                    {'label': 'PB', 'value':'PB_3M_Rev_REL'},
+                                    {"label": "Return_3M_Classification", "value": "Return_3M_Classification"},
+                                    {'label': 'EPS_Growth_3M_Rank', 'value':'EPS_Growth_3M_Rank'},
+                                    {'label': 'FPE_Revision_3M_Rank', 'value':'FPE_Revision_3M_Rank'},
+                                    {'label': 'DY_Revision_3M_Rank', 'value':'DY_Revision_3M_Rank'},
+                                    {'label': 'PB_Revision_3M_Rank', 'value':'PB_Revision_3M_Rank'},
+                                    {'label': 'EVS_Revision_3M_Rank', 'value':'EVS_Revision_3M_Rank'},
                                 ],
+                                value='Return_3M_Classification',
                                 placeholder='Select a Predicted Value',
                                 multi=False,
                                 style={"color": "#696969"},
@@ -138,14 +140,17 @@ app.layout = html.Div(
                             dcc.Dropdown(
                                 id="plot_value2",
                                 options=[
-                                    {"label": "Predicted Forward EPS 3M", "value": "Pred_FWD_EPS_3M_GR"},
-                                    {'label': 'Predicted Forward Revenue 3M', 'value':'Pred_FWD_REV_3M_GR'},
-                                    {'label': 'Predicted FPE 3M', 'value':'Pred_FPE_3M_REV'},
-                                    {'label': 'Predicted EVS 3M', 'value':'Pred_EVS_3M_REV'},
-                                    {'label': 'Predicted DY 3M', 'value':'Pred_DY_3M_REV'},
-                                    {'label': 'Predicted PB 3M', 'value':'Pred_PB_3M_REV'},
+                                    {"label": "Predicted Return_3M_Classification", "value": "Return_3M_Classification"},
+                                    {'label': 'Predicted Return_3M_Classification_Probability', 'value':'Return_3M_Classification_Probability'},
+                                    {'label': 'Predicted EPS_Growth_3M_Rank', 'value':'EPS_Growth_3M_Rank'},
+                                    {'label': 'Predicted Revenue_Growth_3M_Rank', 'value':'Revenue_Growth_3M_Rank'},
+                                    {'label': 'Predicted FPE_Revision_3M_Rank', 'value':'FPE_Revision_3M_Rank'},
+                                    {'label': 'Predicted DY_Revision_3M_Rank', 'value':'DY_Revision_3M_Rank'},
+                                    {'label': 'Predicted B_Revision_3M_Rank', 'value':'PB_Revision_3M_Rank'},
+                                    {'label': 'Predicted EVS_Revision_3M_Rank', 'value':'EVS_Revision_3M_Rank'},
                                 ],
                                 placeholder='Select a Predicted Value',
+                                value='Return_3M_Classification',
                                 multi=False,
                                 style={"color": "#696969"},
                             ),
@@ -281,7 +286,7 @@ def true_pred_generator(n_clicks,ticker,chart_name,data_plot,data_plot2):
     df = df_true[df_true['ticker']==ticker]
     df['datepart'] = pd.to_datetime(df['Date'])
     df['monthyear'] = df.datepart.astype('datetime64[M]') 
-    df2 = df_pred[df_pred['ticker']==ticker]
+    df2 = df_pred[df_pred['Ticker']==ticker]
     df2['datepart'] = pd.to_datetime(df2['Date'])
     df2['monthyear'] = df2.datepart.astype('datetime64[M]') 
 
@@ -705,7 +710,7 @@ def quotes_generator(n_clicks, ticker):
     State('quarter','value')
 )
 def get_predictions(n_clicks,ticker,quarter):
-    df = df_pred[(df_pred['ticker'] == ticker ) & (df_pred['Date']==quarter)].to_dict('records')
+    df = df_pred[(df_pred['Ticker'] == ticker ) & (df_pred['Date']==quarter)].to_dict('records')
     return df
 
 if __name__ == "__main__":
