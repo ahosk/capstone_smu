@@ -69,7 +69,7 @@ app.layout = html.Div(
                                     for i in range(len(ticker_list))
                                 ],
                                 searchable=True,
-                                value='AAPL',
+                                value='T',
                                 #placeholder = 'Enter Stock Ticker',
                                 multi=False,
                                 style={"color": '#696969'}
