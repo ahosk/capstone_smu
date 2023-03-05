@@ -69,7 +69,7 @@ app.layout = html.Div(
                                     for i in range(len(ticker_list))
                                 ],
                                 searchable=True,
-                                value="T",
+                                value="AMZN",
                                 # placeholder = 'Enter Stock Ticker',
                                 multi=False,
                                 style={"color": "#696969"},
@@ -90,7 +90,7 @@ app.layout = html.Div(
                                     {"label": "OHLC", "value": "OHLC"},
                                 ],
                                 placeholder="Select Chart Type",
-                                value="Line",
+                                value="Candlestick",
                                 multi=False,
                                 style={"color": "#696969"},
                             ),
@@ -144,7 +144,7 @@ app.layout = html.Div(
                                         "value": "EVS_Revision_3M_Rank",
                                     },
                                 ],
-                                value="Return_3M_Classification",
+                                value="FPE_Revision_3M_Rank",
                                 placeholder="Select a Predicted Value",
                                 multi=False,
                                 style={"color": "#696969"},
@@ -189,11 +189,11 @@ app.layout = html.Div(
                                     },
                                 ],
                                 placeholder="Select a Predicted Value",
-                                value="Return_3M_Classification",
+                                value="FPE_Revision_3M_Rank",
                                 multi=False,
                                 style={"color": "#696969"},
                             ),
-                            width={"size": 4},
+                            width={"size": 3},
                         ),
                         dbc.Col(  # button
                             dbc.Button(
@@ -205,7 +205,7 @@ app.layout = html.Div(
                             width={"size": 2},
                         ),
                     ],
-                    justify="center",
+                    justify="right",
                 )
             ]
         ),
@@ -258,7 +258,7 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             dcc.Graph(
-                                id="true_pred_graph",
+                                id="graph",
                                 config={
                                     "displaylogo": False,
                                     "modeBarButtonsToRemove": ["pan2d", "lasso2d"],
@@ -271,7 +271,7 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             dcc.Graph(
-                                id="graph",
+                                id="true_pred_graph",
                                 config={
                                     "displaylogo": False,
                                     "modeBarButtonsToRemove": ["pan2d", "lasso2d"],
