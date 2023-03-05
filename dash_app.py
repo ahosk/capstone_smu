@@ -12,7 +12,7 @@ import pandas as pd
 
 
 # defining style color
-colors = {"background": "#000000", "text": "#696969"}
+colors = {"background": "#000000", "text": "#FFFFFF"}
 
 df_true = pd.read_pickle(r"../Dashboard/_dash_data_true_.pkl.gzip", compression="gzip")
 df_true["ticker"] = df_true["ticker"].str.replace(r"-US", "")
@@ -29,6 +29,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.layout = html.Div(
     style={"backgroundColor": colors["background"]},
     children=[
+        html.Hr(style={"height": "5px"}),
         html.Div(
             [  # header Div
                 dbc.Row(
@@ -51,162 +52,169 @@ app.layout = html.Div(
             ]
         ),
         html.Br(),
-        html.Br(),
-        html.Br(),
+        html.Hr(style={"height": "5px"}),
         html.Br(),
         html.Div(
             [  # Dropdown Div
                 dbc.Row(
-                    [
-                        dbc.Col(  # Tickers
-                            dcc.Dropdown(
-                                id="stock_name",
-                                options=[
-                                    {
-                                        "label": str(ticker_list[i]),
-                                        "value": str(ticker_list[i]),
-                                    }
-                                    for i in range(len(ticker_list))
-                                ],
-                                searchable=True,
-                                value="AMZN",
-                                # placeholder = 'Enter Stock Ticker',
-                                multi=False,
-                                style={"color": "#696969"},
+                    dbc.Row(
+                        [
+                            dbc.Col(  # Tickers
+                                dcc.Dropdown(
+                                    id="stock_name",
+                                    options=[
+                                        {
+                                            "label": str(ticker_list[i]),
+                                            "value": str(ticker_list[i]),
+                                        }
+                                        for i in range(len(ticker_list))
+                                    ],
+                                    searchable=True,
+                                    value="AMZN",
+                                    # placeholder = 'Enter Stock Ticker',
+                                    multi=False,
+                                    style={"color": "#696969"},
+                                ),
+                                width={"size": 2},
                             ),
-                            width={"size": 2},
-                        ),
-                        dbc.Col(  # Graph type
-                            dcc.Dropdown(
-                                id="chart",
-                                options=[
-                                    {"label": "line", "value": "Line"},
-                                    {"label": "candlestick", "value": "Candlestick"},
-                                    {"label": "Simple moving average", "value": "SMA"},
-                                    {
-                                        "label": "Exponential moving average",
-                                        "value": "EMA",
-                                    },
-                                    {"label": "OHLC", "value": "OHLC"},
-                                ],
-                                placeholder="Select Chart Type",
-                                value="Candlestick",
-                                multi=False,
-                                style={"color": "#696969"},
+                            dbc.Col(  # Graph type
+                                dcc.Dropdown(
+                                    id="chart",
+                                    options=[
+                                        {"label": "line", "value": "Line"},
+                                        {
+                                            "label": "candlestick",
+                                            "value": "Candlestick",
+                                        },
+                                        {
+                                            "label": "Simple moving average",
+                                            "value": "SMA",
+                                        },
+                                        {
+                                            "label": "Exponential moving average",
+                                            "value": "EMA",
+                                        },
+                                        {"label": "OHLC", "value": "OHLC"},
+                                    ],
+                                    placeholder="Select Chart Type",
+                                    value="Line",
+                                    multi=False,
+                                    style={"color": "#696969"},
+                                ),
+                                width={"size": 2},
                             ),
-                            width={"size": 2},
-                        ),
-                        # dbc.Col(
-                        #     dcc.Dropdown(
-                        #         id="quarter",
-                        #         options=[
-                        #             {"label": "Q4 2019", "value": "12/27/19"},
-                        #             {"label": "Q1 2020", "value": "4/3/20"},
-                        #             {"label": "Q2 2020", "value": "7/2/20"},
-                        #             {'label': "Q3 2020", "value": "10/2/20"},
-                        #             {'label': "Q4 2020", "value": "12/31/20"},
-                        #             {'label': "Q1 2021", "value": "4/1/21"},
-                        #             {'label': "Q2 2021", "value": "7/2/21"},
-                        #             {'label': "Q3 2021", "value": "10/1/21"}
-                        #         ],
-                        #         value='12/27/19',
-                        #         multi=True,
-                        #         style={"color": "#696969"},
-                        #     ),
-                        #     width={"size": 2},
-                        # ),
-                        dbc.Col(
-                            dcc.Dropdown(
-                                id="plot_value",
-                                options=[
-                                    {
-                                        "label": "Return_3M_Classification",
-                                        "value": "Return_3M_Classification",
-                                    },
-                                    {
-                                        "label": "EPS_Growth_3M_Rank",
-                                        "value": "EPS_Growth_3M_Rank",
-                                    },
-                                    {
-                                        "label": "FPE_Revision_3M_Rank",
-                                        "value": "FPE_Revision_3M_Rank",
-                                    },
-                                    {
-                                        "label": "DY_Revision_3M_Rank",
-                                        "value": "DY_Revision_3M_Rank",
-                                    },
-                                    {
-                                        "label": "PB_Revision_3M_Rank",
-                                        "value": "PB_Revision_3M_Rank",
-                                    },
-                                    {
-                                        "label": "EVS_Revision_3M_Rank",
-                                        "value": "EVS_Revision_3M_Rank",
-                                    },
-                                ],
-                                value="FPE_Revision_3M_Rank",
-                                placeholder="Select a Predicted Value",
-                                multi=False,
-                                style={"color": "#696969"},
+                            # dbc.Col(
+                            #     dcc.Dropdown(
+                            #         id="quarter",
+                            #         options=[
+                            #             {"label": "Q4 2019", "value": "12/27/19"},
+                            #             {"label": "Q1 2020", "value": "4/3/20"},
+                            #             {"label": "Q2 2020", "value": "7/2/20"},
+                            #             {'label': "Q3 2020", "value": "10/2/20"},
+                            #             {'label': "Q4 2020", "value": "12/31/20"},
+                            #             {'label': "Q1 2021", "value": "4/1/21"},
+                            #             {'label': "Q2 2021", "value": "7/2/21"},
+                            #             {'label': "Q3 2021", "value": "10/1/21"}
+                            #         ],
+                            #         value='12/27/19',
+                            #         multi=True,
+                            #         style={"color": "#696969"},
+                            #     ),
+                            #     width={"size": 2},
+                            # ),
+                            dbc.Col(
+                                dcc.Dropdown(
+                                    id="plot_value",
+                                    options=[
+                                        {
+                                            "label": "Return_3M_Classification",
+                                            "value": "Return_3M_Classification",
+                                        },
+                                        {
+                                            "label": "EPS_Growth_3M_Rank",
+                                            "value": "EPS_Growth_3M_Rank",
+                                        },
+                                        {
+                                            "label": "FPE_Revision_3M_Rank",
+                                            "value": "FPE_Revision_3M_Rank",
+                                        },
+                                        {
+                                            "label": "DY_Revision_3M_Rank",
+                                            "value": "DY_Revision_3M_Rank",
+                                        },
+                                        {
+                                            "label": "PB_Revision_3M_Rank",
+                                            "value": "PB_Revision_3M_Rank",
+                                        },
+                                        {
+                                            "label": "EVS_Revision_3M_Rank",
+                                            "value": "EVS_Revision_3M_Rank",
+                                        },
+                                    ],
+                                    value="EVS_Revision_3M_Rank",
+                                    placeholder="Select a Predicted Value",
+                                    multi=False,
+                                    style={"color": "#696969"},
+                                ),
+                                width={"size": 2},
                             ),
-                            width={"size": 3},
-                        ),
-                        dbc.Col(
-                            dcc.Dropdown(
-                                id="plot_value2",
-                                options=[
-                                    {
-                                        "label": "Predicted Return_3M_Classification",
-                                        "value": "Return_3M_Classification",
-                                    },
-                                    {
-                                        "label": "Predicted Return_3M_Classification_Probability",
-                                        "value": "Return_3M_Classification_Probability",
-                                    },
-                                    {
-                                        "label": "Predicted EPS_Growth_3M_Rank",
-                                        "value": "EPS_Growth_3M_Rank",
-                                    },
-                                    {
-                                        "label": "Predicted Revenue_Growth_3M_Rank",
-                                        "value": "Revenue_Growth_3M_Rank",
-                                    },
-                                    {
-                                        "label": "Predicted FPE_Revision_3M_Rank",
-                                        "value": "FPE_Revision_3M_Rank",
-                                    },
-                                    {
-                                        "label": "Predicted DY_Revision_3M_Rank",
-                                        "value": "DY_Revision_3M_Rank",
-                                    },
-                                    {
-                                        "label": "Predicted PB_Revision_3M_Rank",
-                                        "value": "PB_Revision_3M_Rank",
-                                    },
-                                    {
-                                        "label": "Predicted EVS_Revision_3M_Rank",
-                                        "value": "EVS_Revision_3M_Rank",
-                                    },
-                                ],
-                                placeholder="Select a Predicted Value",
-                                value="FPE_Revision_3M_Rank",
-                                multi=False,
-                                style={"color": "#696969"},
+                            dbc.Col(
+                                dcc.Dropdown(
+                                    id="plot_value2",
+                                    options=[
+                                        {
+                                            "label": "Predicted Return_3M_Classification",
+                                            "value": "Return_3M_Classification",
+                                        },
+                                        {
+                                            "label": "Predicted Return_3M_Classification_Probability",
+                                            "value": "Return_3M_Classification_Probability",
+                                        },
+                                        {
+                                            "label": "Predicted EPS_Growth_3M_Rank",
+                                            "value": "EPS_Growth_3M_Rank",
+                                        },
+                                        {
+                                            "label": "Predicted Revenue_Growth_3M_Rank",
+                                            "value": "Revenue_Growth_3M_Rank",
+                                        },
+                                        {
+                                            "label": "Predicted FPE_Revision_3M_Rank",
+                                            "value": "FPE_Revision_3M_Rank",
+                                        },
+                                        {
+                                            "label": "Predicted DY_Revision_3M_Rank",
+                                            "value": "DY_Revision_3M_Rank",
+                                        },
+                                        {
+                                            "label": "Predicted PB_Revision_3M_Rank",
+                                            "value": "PB_Revision_3M_Rank",
+                                        },
+                                        {
+                                            "label": "Predicted EVS_Revision_3M_Rank",
+                                            "value": "EVS_Revision_3M_Rank",
+                                        },
+                                    ],
+                                    placeholder="Select a Predicted Value",
+                                    value="EVS_Revision_3M_Rank",
+                                    multi=False,
+                                    style={"color": "#696969"},
+                                ),
+                                width={"size": 2},
                             ),
-                            width={"size": 3},
-                        ),
-                        dbc.Col(  # button
-                            dbc.Button(
-                                "Plot",
-                                id="submit-button-state",
-                                className="mr-1",
-                                n_clicks=1,
+                            dbc.Col(  # button
+                                dbc.Button(
+                                    "Plot",
+                                    id="submit-button-state",
+                                    className="mr-1",
+                                    n_clicks=1,
+                                ),
+                                width={"size": 2},
                             ),
-                            width={"size": 2},
-                        ),
-                    ],
-                    justify="right",
-                )
+                        ],
+                    ),
+                    style={"padding-left": "1000px"},
+                ),
             ]
         ),
         html.Br(),
@@ -227,32 +235,33 @@ app.layout = html.Div(
                         ),
                     ]
                 ),
-                dbc.Col(
-                    dt.DataTable(
-                        id="predictions",
-                        style_table={"width": "auto"},
-                        style_cell={
-                            "white_space": "normal",
-                            "height": "auto",
-                            "backgroundColor": "#272727",
-                            "color": "white",
-                            "font_size": "12px",
-                            "textAlign": "left",
-                            "padding": "5px",
-                            "fontWeight": "bold",
-                        },
-                        style_data={"border": "white"},
-                        style_header={
-                            "backgroundColor": colors["background"],
-                            "border": "#4d4d4d",
-                            "textAlign": "left",
-                            "fontWeight": "bold",
-                            "font_size": "16px",
-                            "padding": "5px",
-                        },
-                        columns=[{"id": c, "name": c} for c in df_pred.columns.values],
-                        data=df_pred.to_dict("records"),
-                    )
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            dt.DataTable(
+                                id="info",
+                                style_table={"height": "auto"},
+                                style_cell={
+                                    "white_space": "normal",
+                                    "height": "auto",
+                                    "backgroundColor": colors["background"],
+                                    "color": "white",
+                                    "font_size": "30px",
+                                },
+                                style_data={"border": "#4d4d4d"},
+                                style_header={
+                                    "backgroundColor": colors["background"],
+                                    "fontWeight": "bold",
+                                    "border": "#4d4d4d",
+                                },
+                                style_cell_conditional=[
+                                    {"if": {"column_id": c}, "textAlign": "center"}
+                                    for c in ["attribute", "value"]
+                                ],
+                            ),
+                            width={"size": 6, "offset": 3},
+                        )
+                    ],
                 ),
                 dbc.Row(
                     [
@@ -267,6 +276,61 @@ app.layout = html.Div(
                         )
                     ]
                 ),
+                html.Br(),
+                html.Hr(style={"height": "5px"}),
+                html.Br(),
+                html.Div(
+                    [  # header Div
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    html.Header(
+                                        [
+                                            html.H1(
+                                                "PREDICTIONS",
+                                                style={
+                                                    "textAlign": "center",
+                                                    "color": colors["text"],
+                                                    "height": "20px",
+                                                },
+                                            )
+                                        ]
+                                    )
+                                )
+                            ]
+                        )
+                    ]
+                ),
+                html.Br(),
+                html.Br(),
+                html.Hr(style={"height": "5px"}),
+                dbc.Col(
+                    dt.DataTable(
+                        id="predictions",
+                        style_table={"width": "auto"},
+                        style_cell={
+                            "white_space": "normal",
+                            "height": "50px",
+                            "backgroundColor": "#272727",
+                            "color": "white",
+                            "font_size": "20px",
+                            "textAlign": "left",
+                            "padding": "5px",
+                            "fontWeight": "bold",
+                        },
+                        style_data={"border": "white"},
+                        style_header={
+                            "backgroundColor": colors["background"],
+                            "border": "#4d4d4d",
+                            "textAlign": "left",
+                            "fontWeight": "bold",
+                            "font_size": "30px",
+                            "padding": "5px",
+                        },
+                        columns=[{"id": c, "name": c} for c in df_pred.columns.values],
+                        data=df_pred.to_dict("records"),
+                    )
+                ),
                 dbc.Row(
                     [
                         dbc.Col(
@@ -277,34 +341,6 @@ app.layout = html.Div(
                                     "modeBarButtonsToRemove": ["pan2d", "lasso2d"],
                                 },
                             ),
-                        )
-                    ]
-                ),
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            dt.DataTable(
-                                id="info",
-                                style_table={"height": "auto"},
-                                style_cell={
-                                    "white_space": "normal",
-                                    "height": "auto",
-                                    "backgroundColor": colors["background"],
-                                    "color": "white",
-                                    "font_size": "16px",
-                                },
-                                style_data={"border": "#4d4d4d"},
-                                style_header={
-                                    "backgroundColor": colors["background"],
-                                    "fontWeight": "bold",
-                                    "border": "#4d4d4d",
-                                },
-                                style_cell_conditional=[
-                                    {"if": {"column_id": c}, "textAlign": "center"}
-                                    for c in ["attribute", "value"]
-                                ],
-                            ),
-                            width={"size": 6, "offset": 3},
                         )
                     ]
                 ),
@@ -344,6 +380,7 @@ def true_pred_generator(n_clicks, ticker, chart_name, data_plot, data_plot2):
                     y=df[data_plot],
                     name=data_plot,
                     line_color="green",
+                    line=dict(width=4),
                 )
             ],
             layout={
@@ -377,7 +414,11 @@ def true_pred_generator(n_clicks, ticker, chart_name, data_plot, data_plot2):
         )
         true_fig.add_trace(
             go.Scatter(
-                x=df2["monthyear"], y=df2[data_plot2], name=data_plot2, line_color="red"
+                x=df2["monthyear"],
+                y=df2[data_plot2],
+                name=data_plot2,
+                line_color="red",
+                line=dict(width=4),
             )
         )
 
